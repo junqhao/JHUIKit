@@ -1,0 +1,30 @@
+[{
+        "name": "瀑布流",
+        "header_reuse": "header",
+        "footer_reuse": "footer",
+        "list": [{
+            "name": "UICollectionViewFlowLayout 默认",
+            "photo": "",
+            "cell_reuse": "cell",
+            "type":0,
+            "list": []
+        }, {
+            "name": "JHListViewFlowLayout 固定高度",
+            "photo": "",
+            "cell_reuse": "cell",
+            "type":1,
+            "list": []
+        }, {
+            "name": "JHListViewFlowLayout 自适应高度",
+            "photo": "",
+            "cell_reuse": "cell",
+            "type":2,
+            "list": []
+        }, {
+            "name": "JHListViewFlowLayout 水平滚动",
+            "photo": "",
+            "cell_reuse": "cell",
+            "type":3,
+            "list": []
+        }]
+}]

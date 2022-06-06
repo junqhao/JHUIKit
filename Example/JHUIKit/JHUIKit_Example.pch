@@ -1,0 +1,21 @@
+//
+//  JHUIKit_Example.pch
+//  JHUIKit_Example
+//
+//  Created by Junqing Hao on 2022/6/4.
+//  Copyright © 2022 junqhao. All rights reserved.
+//
+
+#ifndef JHUIKit_Example_pch
+#define JHUIKit_Example_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+#define WeakSelf(weakSelf)  __weak __typeof(&*self)weakSelf = self;
+
+#import <UIKit/UIKit.h>
+#import <Masonry/Masonry.h>
+#import "JHUIKit_Example-Swift.h"
+#import <JHUIKit/JHUIKit.h>
+#import <YYModel/YYModel.h>
+#endif /* JHUIKit_Example_pch */

@@ -1,0 +1,31 @@
+PODS:
+  - JHUIKit (0.1.0)
+  - Masonry (1.1.0)
+  - SnapKit (5.6.0)
+  - YYModel (1.0.4)
+
+DEPENDENCIES:
+  - JHUIKit (from `../`)
+  - Masonry
+  - SnapKit
+  - YYModel
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Masonry
+    - SnapKit
+    - YYModel
+
+EXTERNAL SOURCES:
+  JHUIKit:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  JHUIKit: a4cce82a31cef7e5775aecf38ae86cf5eacd61f4
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+
+PODFILE CHECKSUM: e6b527420f2549c3a850b0f5bf540e578b15d1ec
+
+COCOAPODS: 1.11.3

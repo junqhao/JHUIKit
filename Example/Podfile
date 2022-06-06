@@ -1,0 +1,19 @@
+use_frameworks!
+#use_modular_headers!
+
+platform :ios, '11.0'
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+target 'JHUIKit_Example' do
+  pod 'JHUIKit', :path => '../'
+  pod 'Masonry'
+  pod 'SnapKit'
+  pod 'YYModel'
+
+  target 'JHUIKit_Tests' do
+    inherit! :search_paths
+
+    #pod 'FBSnapshotTestCase'
+  end
+end
