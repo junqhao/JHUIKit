@@ -32,6 +32,7 @@
     self.listView.delegate = self.viewModel;
     self.listView.dataSource = self.viewModel;
     [self registerReusable];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didChangeRotate:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
 }
 
 -(void)setLayout:(JHListViewFlowLayout *)layout{
@@ -72,6 +73,32 @@
 
 -(NSString *)title{
     return @"";
+}
+
+-(void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator{
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self viewDidTransitionToSize:size withTransitionCoordinator:coordinator];
+    });
+}
+
+-(void)viewDidTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator{
+    if (size.width > size.height) {
+        CGFloat width = MAX(CGRectGetHeight(self.view.frame), CGRectGetWidth(self.view.frame));
+        CGFloat height = MIN(CGRectGetHeight(self.view.frame), CGRectGetWidth(self.view.frame));
+        CGFloat newHeight = height - UIDevice.jh_navigationBarHeight;
+        CGFloat newWidth = width;
+        self.listView.frame = CGRectMake(0, UIDevice.jh_navigationBarHeight, newWidth,newHeight);
+    }else{
+        CGFloat width = MIN(CGRectGetHeight(self.view.frame), CGRectGetWidth(self.view.frame));
+        CGFloat height = MAX(CGRectGetHeight(self.view.frame), CGRectGetWidth(self.view.frame));
+        CGFloat newWidth = width;
+        CGFloat newHeight = height - UIDevice.jh_aboveNavigationBarHeight; 
+        self.listView.frame = CGRectMake(0, UIDevice.jh_aboveNavigationBarHeight, newWidth, newHeight);
+    }
+    [self invalidateLayout];
+    [self reloadData];
+    
 }
 
 @end

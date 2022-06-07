@@ -9,7 +9,7 @@
 @implementation UICollectionViewCell (JHAddition)
 
 - (NSIndexPath *)getIndexPath {
-    return [[self getCollectionView] indexPathForCell:self];
+    return [[self getCollectionView] indexPathForItemAtPoint:self.center];
 }
 
 - (UICollectionView *)getCollectionView {

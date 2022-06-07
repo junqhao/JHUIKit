@@ -137,8 +137,22 @@
     [self layoutIfNeeded];
     CGSize size = [self.contentView systemLayoutSizeFittingSize: layoutAttributes.size];
     CGRect cellFrame = layoutAttributes.frame;
-    cellFrame.size.height= ceil(size.height);
+    
+    if(self.isScrollVertical){
+        cellFrame.size.height = ceil(size.height);
+    }else{
+        cellFrame.size.width = ceil(size.width);
+    }
+    
     layoutAttributes.frame= cellFrame;
+    NSValue *value = [NSValue valueWithCGSize:layoutAttributes.frame.size];
+    NSIndexPath *indexPath = layoutAttributes.indexPath;
+    if(value && indexPath){
+        [self.nextResponder routerEventWithName:@"updateAttributes" userInfo:@{
+            @"size":value,
+            @"indexPath":indexPath,
+        }];
+    }
     return layoutAttributes;
 }
 
@@ -151,4 +165,12 @@
         [self.nextResponder routerEventWithName:eventName userInfo:[dic copy]];
     }
 }
+
+-(BOOL)isScrollVertical{
+    UICollectionView *collectionView = [self getCollectionView];
+    UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)collectionView.collectionViewLayout;
+    BOOL r = layout.scrollDirection == UICollectionViewScrollDirectionVertical;
+    return r;
+}
+
 @end

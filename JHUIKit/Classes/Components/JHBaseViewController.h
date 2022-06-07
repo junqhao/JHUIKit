@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)reloadData;
 
 -(void)requestData;
+
+-(void)viewDidTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator;
 @end
 
 NS_ASSUME_NONNULL_END

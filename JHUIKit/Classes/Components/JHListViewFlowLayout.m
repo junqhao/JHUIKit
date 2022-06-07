@@ -20,7 +20,11 @@
 //updates
 @property (nonatomic, strong) NSMutableArray<NSIndexPath *> *insertIndexPaths;
 @property (nonatomic, strong) NSMutableArray<NSIndexPath *> *deleteIndexPaths;
+
 @property (nonatomic, assign) BOOL isPinToTop;
+@property (nonatomic, assign) BOOL isOrientationChanged;
+
+@property (nonatomic,strong) NSMutableDictionary *actualItemSizes;
 @end
 
 @implementation JHListViewFlowLayout
@@ -31,6 +35,9 @@
         self.attributes = [[NSMutableArray alloc] init];
         self.headerAttributes = [[NSMutableArray alloc] init];
         self.maxEnds = [[NSMutableArray alloc] init];
+        self.actualItemSizes = [[NSMutableDictionary alloc] init];
+        self.isOrientationChanged = YES;
+        
     }
     return self;
 }
@@ -43,17 +50,14 @@
 
 #pragma mark overrides -basic
 
+-(void)invalidateLayout{
+    [super invalidateLayout];
+}
+
 - (void)prepareLayout {
     [super prepareLayout];
     NSInteger numberOfSections = [self.collectionView numberOfSections];
     if (numberOfSections <= 0) {
-        return;
-    }
-    if(self.isPinToTop){
-        for (NSInteger section = 0; section < numberOfSections; section ++) {
-            NSIndexPath * sectionIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
-            [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader atIndexPath:sectionIndexPath];
-        }
         return;
     }
     
@@ -63,13 +67,8 @@
         NSInteger numberOfItems = [self.collectionView numberOfItemsInSection:section];
         NSIndexPath * sectionIndexPath = [NSIndexPath indexPathForItem:0 inSection:section];
         
-        if(JH_IsScrollDirectionVertical){
-            NSMutableDictionary *sectionItemYs = [NSMutableDictionary dictionary];
-            [self.maxEnds addObject:sectionItemYs];
-        }else{
-            NSMutableDictionary *sectionItemXs = [NSMutableDictionary dictionary];
-            [self.maxEnds addObject:sectionItemXs];
-        }
+        NSMutableDictionary *sectionItemEnds = [NSMutableDictionary dictionary];
+        [self.maxEnds addObject:sectionItemEnds];
         
         //sectionHeader
         UICollectionViewLayoutAttributes * headerAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader atIndexPath:sectionIndexPath];
@@ -129,19 +128,6 @@
 }
 
 -(BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds{
-    //return NO;
-    CGRect oldBounds = self.collectionView.bounds;
-    if (CGRectGetWidth(newBounds) != CGRectGetWidth(oldBounds)) {
-        return YES;
-    }
-    
-    if([self getPinToTop]){
-        self.isPinToTop = YES;
-        return YES;
-    }else{
-        self.isPinToTop = NO;
-    }
-    
     return NO;
 }
 
@@ -297,18 +283,13 @@
     attr.frame = CGRectMake(x, y, size.width, size.height);
     
     //set real size
-    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
-    UICollectionViewLayoutAttributes *preferAttr = nil;
-    if ([cell respondsToSelector:@selector(preferredLayoutAttributesFittingAttributes:)]) {
-        preferAttr = [cell preferredLayoutAttributesFittingAttributes:attr];
+    NSValue *value = [self.actualItemSizes objectForKey:indexPath];
+    if(value){
+        CGSize actualSize = [value CGSizeValue];
+        CGFloat actualHeight = actualSize.height;
+        attr.frame = CGRectMake(x, y, size.width, actualHeight);
+        [sectionItemYs setObject:@(y + actualHeight) forKey:@(minCol)];
     }
-   
-    if(preferAttr){
-        CGFloat realHeight = preferAttr.frame.size.height;
-        attr.frame = CGRectMake(x, y, size.width, realHeight);
-        [sectionItemYs setObject:@(y + realHeight) forKey:@(minCol)];
-    }
-    
     return attr;
 }
 
@@ -375,16 +356,12 @@
     attr.frame = CGRectMake(x, y, size.width, size.height);
     
     //set real size
-    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
-    UICollectionViewLayoutAttributes *preferAttr = nil;
-    if ([cell respondsToSelector:@selector(preferredLayoutAttributesFittingAttributes:)]) {
-        preferAttr = [cell preferredLayoutAttributesFittingAttributes:attr];
-    }
-   
-    if(preferAttr){
-        CGFloat realWidth = preferAttr.frame.size.height;
-        attr.frame = CGRectMake(x, y, realWidth, size.height);
-        [sectionItemXs setObject:@(x + realWidth) forKey:@(minCol)];
+    NSValue *value = [self.actualItemSizes objectForKey:indexPath];
+    if(value){
+        CGSize actualSize = [value CGSizeValue];
+        CGFloat actualWidth = actualSize.width;
+        attr.frame = CGRectMake(x, y, actualWidth, size.height);
+        [sectionItemXs setObject:@(x + actualWidth) forKey:@(minCol)];
     }
     
     return attr;
@@ -547,6 +524,7 @@
     if(section < 0) section = 0;
     NSDictionary<NSNumber *,NSNumber *> *sectionYs = self.maxEnds[section];
     __block CGFloat maxY = [sectionYs objectForKey:@(0)].floatValue;
+    //NSLog(@"kkk section:%ld sectionYs:%@",section, sectionYs);
     [sectionYs enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
         CGFloat y = [obj floatValue];
         if(y > maxY){
@@ -646,67 +624,80 @@
     return r;
 }
 
+#pragma mark public
+
+-(void)setCellSize:(CGSize)size atIndexPath:(NSIndexPath *)indexPath{
+    if(indexPath){
+        [self.actualItemSizes setObject:[NSValue valueWithCGSize:size] forKey:indexPath];
+    }
+}
+
+-(void)resetActualSizes{
+    [_actualItemSizes removeAllObjects];
+}
+
 #pragma mark delegate
 
 - (NSInteger)jhListViewFlowLayoutColumnsAtSection:(NSInteger)section{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:columnsAtSection:)]){
-        return [self.delegate jh_listView:self.collectionView columnsAtSection:section];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:columnsAtSection:)]){
+        return [self.delegate jh_listView:self.collectionView layout:self columnsAtSection:section];
     }
     return 1;
 }
 
 - (CGSize)jhListViewFlowLayoutHeaderSizeAtSection:(NSInteger)section{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:headerSizeAtSection:)]){
-        return [self.delegate jh_listView:self.collectionView headerSizeAtSection:section];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:headerSizeAtSection:)]){
+        return [self.delegate jh_listView:self.collectionView layout:self headerSizeAtSection:section];
     }
     return CGSizeZero;
 }
 
 - (CGSize)jhListViewFlowLayoutFooterSizeAtSection:(NSInteger)section{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:footerSizeAtSection:)]){
-        return [self.delegate jh_listView:self.collectionView footerSizeAtSection:section];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:footerSizeAtSection:)]){
+        return [self.delegate jh_listView:self.collectionView layout:self footerSizeAtSection:section];
     }
     return CGSizeZero;
 }
 
 - (CGSize)jhListViewFlowLayoutItemSizeForIndexPath:(NSIndexPath *)indexPath{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:itemSizeForIndexPath:)]){
-        return [self.delegate jh_listView:self.collectionView itemSizeForIndexPath:indexPath];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:itemSizeForIndexPath:)]){
+        return [self.delegate jh_listView:self.collectionView layout:self itemSizeForIndexPath:indexPath];
     }
     return CGSizeZero;
 }
 
 - (UIEdgeInsets)jhListViewFlowLayoutInsetsAtSection:(NSInteger)section{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:insetsAtSection:)]){
-        return [self.delegate jh_listView:self.collectionView insetsAtSection:section];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:insetsAtSection:)]){
+        return [self.delegate jh_listView:self.collectionView layout:self insetsAtSection:section];
     }
     return UIEdgeInsetsZero;
 }
 
 - (CGFloat)jhListViewFlowLayoutLineSpacingAtSection:(NSInteger)section{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:lineSpacingAtSection:)]){
-        return [self.delegate jh_listView:self.collectionView lineSpacingAtSection:section];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:lineSpacingAtSection:)]){
+        return [self.delegate jh_listView:self.collectionView layout:self lineSpacingAtSection:section];
     }
     return 0;
 }
 
 - (CGFloat)jhListViewFlowLayoutItemSpacingAtSection:(NSInteger)section{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:itemSpacingAtSection:)]){
-        return [self.delegate jh_listView:self.collectionView itemSpacingAtSection:section];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:itemSpacingAtSection:)]){
+        return [self.delegate jh_listView:self.collectionView layout:self itemSpacingAtSection:section];
     }
     return 0;
 }
 
 - (BOOL)jhListViewFlowLayoutHeaderPinToTopAtSection:(NSInteger)section{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:headerPinToTopAtSection:)]){
-        return [self.delegate jh_listView:self.collectionView headerPinToTopAtSection:section];
+    return 0;
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:headerPinToTopAtSection:)]){
+        return [self.delegate jh_listView:self.collectionView layout:self headerPinToTopAtSection:section];
     }
     return 0;
 }
 
 - (NSString *)jhListViewFlowLayoutDecorationViewClassAtSection:(NSInteger)section{
     if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:decorationViewClassAtSection:)]){
-        return [self.delegate jh_listView:self.collectionView decorationViewClassAtSection:section];
+        return [self.delegate jh_listView:self.collectionView layout:self decorationViewClassAtSection:section];
     }
     return nil;
 }

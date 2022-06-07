@@ -26,6 +26,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///tabBarHeight + safeAreaInsets.bottom
 + (CGFloat)jh_belowTabBarHeight;
 
++ (CGFloat)jh_screenWidth;
+
++ (CGFloat)jh_screenHeight;
+
++ (BOOL)isPortraitDirection;
+
 @end
 
 NS_ASSUME_NONNULL_END

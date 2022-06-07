@@ -60,8 +60,12 @@
             }
                 break;
             case 2:
-            case 3:{
+            {
                 controller = [[JHMasonryWFViewController alloc] init];
+            }
+                break;
+            case 3:{
+                controller = [[JHMasonryWFViewController2 alloc] init];
             }
                 break;
         }

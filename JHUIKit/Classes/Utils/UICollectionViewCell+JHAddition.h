@@ -11,7 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UICollectionViewCell (JHAddition)
 
+//不准,已废弃
 - (NSIndexPath *)getIndexPath;
+
+- (UICollectionView *)getCollectionView;
 
 @end
 

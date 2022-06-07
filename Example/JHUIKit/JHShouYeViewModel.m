@@ -85,15 +85,15 @@
     }
 }
 
--(CGSize)jh_listView:(UICollectionView *)collectionView itemSizeForIndexPath:(NSIndexPath *)indexPath{
+-(CGSize)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout itemSizeForIndexPath:(NSIndexPath *)indexPath{
     return CGSizeMake(0, 60);
 }
 
--(CGSize)jh_listView:(UICollectionView *)collectionView headerSizeAtSection:(NSInteger)section{
+-(CGSize)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout headerSizeAtSection:(NSInteger)section{
     return CGSizeMake([UIScreen mainScreen].bounds.size.width, 30);
 }
 
--(CGSize)jh_listView:(UICollectionView *)collectionView footerSizeAtSection:(NSInteger)section{
+-(CGSize)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout footerSizeAtSection:(NSInteger)section{
     return CGSizeMake([UIScreen mainScreen].bounds.size.width, 30);
 }
 

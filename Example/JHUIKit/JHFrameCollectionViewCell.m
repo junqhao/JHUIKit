@@ -23,7 +23,7 @@
     [super layoutSubviews];
     //_label.preferredMaxLayoutWidth = self.frame.size.width-20;
     //[_label setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-   // [self setData:_food];
+    [self setData:_food];
 }
 
 -(void)setData:(JHFood *)food{

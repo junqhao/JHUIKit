@@ -30,6 +30,11 @@
             [wself reloadData];
         }
     };
+    //[self requestData];
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
     [self requestData];
 }
 
@@ -54,6 +59,10 @@
         }else{
             
         }
+    }else if([eventName isEqualToString:@"updateAttributes"]){
+        NSValue *value = userInfo[@"size"];
+        NSIndexPath *indexPath =userInfo[@"indexPath"];
+        [self.layout setCellSize:[value CGSizeValue]  atIndexPath:indexPath];
     }
 }
 
@@ -108,5 +117,29 @@
 //        NSLog(@"删除位置非法");
 //    }
 //}
+
+@end
+
+
+@implementation JHMasonryWFViewController2
+
+-(void)viewDidLoad{
+    [super viewDidLoad];
+    self.layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    self.listView.frame = CGRectMake(0, (UIDevice.jh_screenHeight - 400)*.5, UIDevice.jh_screenWidth, 400);
+}
+
+-(BOOL)shouldAutorotate
+{
+    return 0;
+}
+
+-(UIInterfaceOrientationMask)supportedInterfaceOrientations{
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+-(void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo{
+    [super routerEventWithName:eventName userInfo:userInfo];
+}
 
 @end

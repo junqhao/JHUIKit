@@ -44,27 +44,27 @@
 
 //////////////////// default system layout need blow //////////////////////////////
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
-    return [self jh_listView:collectionView itemSizeForIndexPath:indexPath];
+    return [self jh_listView:collectionView layout:collectionViewLayout itemSizeForIndexPath:indexPath];
 }
 
 -(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return [self jh_listView:collectionView insetsAtSection:section];
+    return [self jh_listView:collectionView layout:collectionViewLayout insetsAtSection:section];
 }
 
 -(CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section{
-    return [self jh_listView:collectionView lineSpacingAtSection:section];
+    return [self jh_listView:collectionView layout:collectionViewLayout lineSpacingAtSection:section];
 }
 
 -(CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section{
-    return [self jh_listView:collectionView itemSpacingAtSection:section];
+    return [self jh_listView:collectionView layout:collectionViewLayout itemSpacingAtSection:section];
 }
 
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section{
-    return [self jh_listView:collectionView footerSizeAtSection:section];
+    return [self jh_listView:collectionView layout:collectionViewLayout footerSizeAtSection:section];
 }
 
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section{
-    return [self jh_listView:collectionView headerSizeAtSection:section];
+    return [self jh_listView:collectionView layout:collectionViewLayout headerSizeAtSection:section];
 }
 
 ////////////////////// jhflowlayout need below /////////////////////////////
@@ -120,7 +120,7 @@
     }
 }
 
--(CGSize)jh_listView:(UICollectionView *)collectionView itemSizeForIndexPath:(NSIndexPath *)indexPath{
+-(CGSize)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout itemSizeForIndexPath:(NSIndexPath *)indexPath{
     if(indexPath.section >= self.datas.count){
         return CGSizeZero;
     }else{
@@ -139,43 +139,49 @@
     }
 }
 
--(CGSize)jh_listView:(UICollectionView *)collectionView headerSizeAtSection:(NSInteger)section{
-    return CGSizeMake([UIScreen mainScreen].bounds.size.width - 50, 30);
+-(CGSize)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout headerSizeAtSection:(NSInteger)section{
+    if(layout.scrollDirection == UICollectionViewScrollDirectionHorizontal){
+        return CGSizeMake(30,CGRectGetHeight(collectionView.frame));
+    }
+    return CGSizeMake(CGRectGetWidth(collectionView.frame) - 50, 30);
 }
 
--(CGSize)jh_listView:(UICollectionView *)collectionView footerSizeAtSection:(NSInteger)section{
-    return CGSizeMake([UIScreen mainScreen].bounds.size.width - 50, 30);
+-(CGSize)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout footerSizeAtSection:(NSInteger)section{
+    if(layout.scrollDirection == UICollectionViewScrollDirectionHorizontal){
+        return CGSizeMake(30,CGRectGetHeight(collectionView.frame));
+    }
+    return CGSizeMake(CGRectGetWidth(collectionView.frame) - 50, 30);
 }
 
--(UIEdgeInsets)jh_listView:(UICollectionView *)collectionView insetsAtSection:(NSInteger)section{
+-(UIEdgeInsets)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout insetsAtSection:(NSInteger)section{
     return UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
--(CGFloat)jh_listView:(UICollectionView *)collectionView lineSpacingAtSection:(NSInteger)section{
+-(CGFloat)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout lineSpacingAtSection:(NSInteger)section{
     return 10;
 }
 
--(CGFloat)jh_listView:(UICollectionView *)collectionView itemSpacingAtSection:(NSInteger)section{
+-(CGFloat)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout itemSpacingAtSection:(NSInteger)section{
     return 10;
 }
 
--(BOOL)jh_listView:(UICollectionView *)collectionView headerPinToTopAtSection:(NSInteger)section{
+-(BOOL)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout headerPinToTopAtSection:(NSInteger)section{
     if (section == 0) {
         return 1;
     }
     return 0;
 }
 
--(NSInteger)jh_listView:(UICollectionView *)collectionView columnsAtSection:(NSInteger)section{
+-(NSInteger)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout columnsAtSection:(NSInteger)section{
     if(section >= self.datas.count){
         return 1;
-    }{
+    }else{
         JHFoodSection *foodsection = self.datas[section];
         return foodsection.column;
     }
 }
 
--(NSString *)jh_listView:(UICollectionView *)collectionView decorationViewClassAtSection:(NSInteger)section{
+-(NSString *)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout decorationViewClassAtSection:(NSInteger)section{
     if(section == 0){
         return @"JHDecorationView_Type1";
     }else if(section == 1){

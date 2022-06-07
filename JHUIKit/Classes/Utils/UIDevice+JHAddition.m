@@ -49,4 +49,20 @@
 +(CGFloat)jh_belowTabBarHeight{
     return [self jh_tabBarHeight] + [self jh_safeAreaInsets].bottom;
 }
+
++ (CGFloat)jh_screenWidth{
+    return CGRectGetWidth(UIScreen.mainScreen.bounds);
+}
+
++ (CGFloat)jh_screenHeight{
+    return CGRectGetHeight(UIScreen.mainScreen.bounds);;
+}
+
++ (BOOL)isPortraitDirection{
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    if(orientation == UIInterfaceOrientationPortrait || orientation == UIInterfaceOrientationPortraitUpsideDown){
+        return YES;
+    }
+    return NO;
+}
 @end
