@@ -14,6 +14,7 @@
 #import "JHSystemWFViewController.h"
 #import "JHMasonryWFViewController.h"
 #import "JHFrameWFViewController.h"
+#import "JHHoWFViewController.h"
 
 @interface JHViewController ()
 
@@ -32,7 +33,6 @@
             [wself reloadData];
         }
     };
-    [self requestData];
 }
 
 -(NSString *)title{
@@ -65,7 +65,7 @@
             }
                 break;
             case 3:{
-                controller = [[JHMasonryWFViewController2 alloc] init];
+                controller = [[JHHoWFViewController alloc] init];
             }
                 break;
         }

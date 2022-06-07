@@ -16,6 +16,7 @@
 		447DA0D3284DA89D00B2DE7C /* JHFrameCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 447DA0D2284DA89D00B2DE7C /* JHFrameCollectionViewCell.m */; };
 		447DA0D6284DE6D900B2DE7C /* JHFrameWFViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 447DA0D5284DE6D900B2DE7C /* JHFrameWFViewController.m */; };
 		447DA0D9284DE6EC00B2DE7C /* JHMasonryWFViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 447DA0D8284DE6EC00B2DE7C /* JHMasonryWFViewController.m */; };
+		447DA0DC284F71DF00B2DE7C /* JHHoWFViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 447DA0DB284F71DF00B2DE7C /* JHHoWFViewController.m */; };
 		44CBB0C3284B8AB50038FFCB /* JHMasonryCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 44CBB0BA284B8AB50038FFCB /* JHMasonryCollectionViewCell.m */; };
 		44CBB0C4284B8AB50038FFCB /* JHCollectionHeaderFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 44CBB0BE284B8AB50038FFCB /* JHCollectionHeaderFooterView.m */; };
 		44CBB0C5284B8AB50038FFCB /* JHMoreOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CBB0C0284B8AB50038FFCB /* JHMoreOptionView.swift */; };
@@ -70,6 +71,8 @@
 		447DA0D5284DE6D900B2DE7C /* JHFrameWFViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JHFrameWFViewController.m; sourceTree = "<group>"; };
 		447DA0D7284DE6EC00B2DE7C /* JHMasonryWFViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JHMasonryWFViewController.h; sourceTree = "<group>"; };
 		447DA0D8284DE6EC00B2DE7C /* JHMasonryWFViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JHMasonryWFViewController.m; sourceTree = "<group>"; };
+		447DA0DA284F71DF00B2DE7C /* JHHoWFViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JHHoWFViewController.h; path = "../../../../.Trash/未命名文件夹/JHUIKit/Example/JHUIKit/JHHoWFViewController.h"; sourceTree = "<group>"; };
+		447DA0DB284F71DF00B2DE7C /* JHHoWFViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JHHoWFViewController.m; path = "../../../../.Trash/未命名文件夹/JHUIKit/Example/JHUIKit/JHHoWFViewController.m"; sourceTree = "<group>"; };
 		44CBB0B9284B8AB40038FFCB /* JHUIKit_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JHUIKit_Example-Bridging-Header.h"; sourceTree = "<group>"; };
 		44CBB0BA284B8AB50038FFCB /* JHMasonryCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHMasonryCollectionViewCell.m; sourceTree = "<group>"; };
 		44CBB0BB284B8AB50038FFCB /* JHCollectionHeaderFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHCollectionHeaderFooterView.h; sourceTree = "<group>"; };
@@ -165,6 +168,8 @@
 				447DA0D5284DE6D900B2DE7C /* JHFrameWFViewController.m */,
 				447DA0D7284DE6EC00B2DE7C /* JHMasonryWFViewController.h */,
 				447DA0D8284DE6EC00B2DE7C /* JHMasonryWFViewController.m */,
+				447DA0DA284F71DF00B2DE7C /* JHHoWFViewController.h */,
+				447DA0DB284F71DF00B2DE7C /* JHHoWFViewController.m */,
 			);
 			name = JHCollectionView;
 			sourceTree = "<group>";
@@ -459,6 +464,7 @@
 				447DA0D3284DA89D00B2DE7C /* JHFrameCollectionViewCell.m in Sources */,
 				44CBB0C7284B8AB50038FFCB /* JHCollectionViewCell.m in Sources */,
 				447DA0D6284DE6D900B2DE7C /* JHFrameWFViewController.m in Sources */,
+				447DA0DC284F71DF00B2DE7C /* JHHoWFViewController.m in Sources */,
 				6003F59E195388D20070C39A /* JHAppDelegate.m in Sources */,
 				44CBB0C5284B8AB50038FFCB /* JHMoreOptionView.swift in Sources */,
 				6003F5A7195388D20070C39A /* JHViewController.m in Sources */,

@@ -36,7 +36,6 @@
         }
     }
     self.datas = r;
-    self.datas = r;
     if (self.complete) {
         self.complete(YES, self.datas);
     }

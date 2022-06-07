@@ -35,6 +35,11 @@
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didChangeRotate:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self requestData];
+}
+
 -(void)setLayout:(JHListViewFlowLayout *)layout{
     _layout = layout;
     self.listView.collectionViewLayout = _layout;

@@ -16,6 +16,13 @@
     return @{@"list" : JHBaseCellModel.class,
               };
 }
+
+-(NSMutableArray<__kindof JHBaseCellModel *> *)list{
+    if(!_list){
+        _list = [NSMutableArray array];
+    }
+    return _list;
+}
 @end
 
 
@@ -23,5 +30,12 @@
 + (NSDictionary *)modelContainerPropertyGenericClass {
     return @{@"list" : JHBaseSectionModel.class,
               };
+}
+
+-(NSMutableArray<__kindof JHBaseSectionModel *> *)list{
+    if(!_list){
+        _list = [NSMutableArray array];
+    }
+    return _list;
 }
 @end
