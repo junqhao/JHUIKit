@@ -119,24 +119,3 @@
 //}
 
 @end
-
-
-@implementation JHMasonryWFViewController2
-
--(void)viewDidLoad{
-    [super viewDidLoad];
-    self.layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    self.viewModel.isAutoLayout = NO;
-    self.listView.frame = CGRectMake(0, (UIDevice.jh_screenHeight - 400)*.5, UIDevice.jh_screenWidth, 400);
-}
-
--(BOOL)shouldAutorotate
-{
-    return 0;
-}
-
--(UIInterfaceOrientationMask)supportedInterfaceOrientations{
-    return UIInterfaceOrientationMaskPortrait;
-}
-
-@end
