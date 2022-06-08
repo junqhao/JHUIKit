@@ -10,8 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JHFoodViewModel : JHBaseViewModel
+typedef void(^InsertBlock)(BOOL success, NSIndexPath *indexPath, NSMutableArray<JHBaseSectionModel *> *datas);
 
+typedef void(^deleteBlock)(BOOL success, NSIndexPath *indexPath, NSMutableArray<JHBaseSectionModel *> *datas);
+
+@interface JHFoodViewModel : JHBaseViewModel
+@property(nonatomic,copy) InsertBlock insertBlock;
+@property(nonatomic,copy) deleteBlock deleteBlock;
+
+-(void)insertFoodAt:(NSIndexPath *)indexPath;
+
+-(void)deleteFoodAt:(NSIndexPath *)indexPath;
 @end
 
 NS_ASSUME_NONNULL_END

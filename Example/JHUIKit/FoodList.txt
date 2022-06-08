@@ -84,8 +84,8 @@
     },
     {
         "name": "section2",
-        "header_reuse": "header",
-        "footer_reuse": "footer",
+        "header_reuse": "",
+        "footer_reuse": "",
         "column" : 3,
         "list": [{
             "name": "ceshiwenan测试测试文案ceshiwenan测试测试文案ceshiwena",

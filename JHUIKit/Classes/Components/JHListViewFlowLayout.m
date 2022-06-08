@@ -15,6 +15,8 @@
 @property (nonatomic, assign) CGFloat contentHeight;
 @property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *attributes;
 @property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *headerAttributes;
+@property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *footerAttributes;
+@property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *decorationAttributes;
 //全部section的全部column的maxY或X
 @property (nonatomic, strong) NSMutableArray<NSMutableDictionary *> *maxEnds;
 //updates
@@ -34,6 +36,8 @@
     if (self = [super init]) {
         self.attributes = [[NSMutableArray alloc] init];
         self.headerAttributes = [[NSMutableArray alloc] init];
+        self.footerAttributes = [[NSMutableArray alloc] init];
+        self.decorationAttributes = [[NSMutableArray alloc] init];
         self.maxEnds = [[NSMutableArray alloc] init];
         self.actualItemSizes = [[NSMutableDictionary alloc] init];
         self.isOrientationChanged = YES;
@@ -45,6 +49,8 @@
 - (void)resetData{
     [_attributes removeAllObjects];
     [_headerAttributes removeAllObjects];
+    [_footerAttributes removeAllObjects];
+    [_decorationAttributes removeAllObjects];
     [_maxEnds removeAllObjects];
 }
 
@@ -90,12 +96,14 @@
         UICollectionViewLayoutAttributes * footerAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter atIndexPath:sectionIndexPath];
         if (footerAttr) {
             [_attributes addObject:footerAttr];
+            [_footerAttributes addObject:footerAttr];
         }
         
         //decoration view
         UICollectionViewLayoutAttributes *decoAttr = [self layoutAttributesForDecorationViewOfKind:@"" atIndexPath:sectionIndexPath];
         if(decoAttr){
             [_attributes addObject:decoAttr];
+            [_decorationAttributes addObject:decoAttr];
         }
     }
 }
@@ -152,8 +160,11 @@
     if(![className isKindOfClass:[NSString class]]) return nil;
     Class cls = NSClassFromString(className);
     if(!cls) return nil;
+    UICollectionViewLayoutAttributes *attr = [self findDecorationAttributes:indexPath];
+    if(!attr){
+        attr = [UICollectionViewLayoutAttributes layoutAttributesForDecorationViewOfKind:className withIndexPath:indexPath];
+    }
     [self registerClass:cls forDecorationViewOfKind:className];
-    UICollectionViewLayoutAttributes *attr = [UICollectionViewLayoutAttributes layoutAttributesForDecorationViewOfKind:className withIndexPath:indexPath];
     CGFloat x = 0.0,y = 0.0;
     NSInteger section = indexPath.section;
     if(section > 0){
@@ -165,6 +176,13 @@
 }
 
 #pragma mark overrides -updates
+
+//-(void)finalizeCollectionViewUpdates{
+//    [super finalizeCollectionViewUpdates];
+//    self.deleteIndexPaths = nil;
+//    self.insertIndexPaths = nil;
+//}
+//
 //-(void)prepareForCollectionViewUpdates:(NSArray<UICollectionViewUpdateItem *> *)updateItems{
 //    [super prepareForCollectionViewUpdates:updateItems];
 //    //删除整个section时updateItems.count==1,row = NSInteger.MAX
@@ -173,7 +191,7 @@
 ////    }
 //    self.deleteIndexPaths = [NSMutableArray array];
 //    self.insertIndexPaths = [NSMutableArray array];
-//    
+//
 //    for (UICollectionViewUpdateItem *update in updateItems)
 //    {
 //        if (update.updateAction == UICollectionUpdateActionDelete)
@@ -186,17 +204,18 @@
 //        }
 //    }
 //}
-//
+
 //-(UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath{
 //    UICollectionViewLayoutAttributes *attributes = [self findItemAttributes:itemIndexPath];
 //    if ([self.insertIndexPaths containsObject:itemIndexPath])
 //    {
-//        if (!attributes){
-//            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
-//        }
-//        attributes.alpha = 0.0;
-//        attributes.transform = CGAffineTransformMakeScale(.5, .5);
+//        UICollectionViewLayoutAttributes *attributesCopy = [attributes copy];
+//        [self setActualSize:attributesCopy];
+//        attributesCopy.alpha = 0.0;
+//        attributesCopy.transform = CGAffineTransformMakeScale(.5, .5);
+//        return attributesCopy;
 //    }
+//    [self setActualSize:attributes];
 //    return attributes;
 //}
 //
@@ -213,14 +232,17 @@
 //    return attributes;
 //}
 
--(void)finalizeCollectionViewUpdates{
-    [super finalizeCollectionViewUpdates];
-    self.deleteIndexPaths = nil;
-    self.insertIndexPaths = nil;
-}
-
 #pragma mark custom overrides
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPathInVertical:(NSIndexPath *)indexPath{
+    //optimize reuse
+    UICollectionViewLayoutAttributes *attr = [self findItemAttributes:indexPath];
+    if(attr){
+        [self setActualSize:attr isInit:NO];
+        return attr;
+    }else{
+        attr = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
+    }
+    
     CGSize size = CGSizeZero;
     if(CGSizeEqualToSize(CGSizeZero,self.estimatedItemSize)){
         CGSize delegate_size = [self jhListViewFlowLayoutItemSizeForIndexPath:indexPath];
@@ -232,12 +254,6 @@
     }else{
         //autolayout
         size = self.estimatedItemSize;
-    }
-    
-    //optimize reuse
-    UICollectionViewLayoutAttributes *attr = [self findItemAttributes:indexPath];
-    if(!attr){
-        attr = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
     }
     
     CGFloat x = 0.0,y = 0.0;
@@ -279,21 +295,24 @@
     x = insets.left + (size.width + itemSpacing) * minCol;
     y = minY + ((columns > row) ? 0 : lineSpacing);
     
-    [sectionItemYs setObject:@(y + size.height) forKey:@(minCol)];
     attr.frame = CGRectMake(x, y, size.width, size.height);
     
     //set real size
-    NSValue *value = [self.actualItemSizes objectForKey:indexPath];
-    if(value){
-        CGSize actualSize = [value CGSizeValue];
-        CGFloat actualHeight = actualSize.height;
-        attr.frame = CGRectMake(x, y, size.width, actualHeight);
-        [sectionItemYs setObject:@(y + actualHeight) forKey:@(minCol)];
-    }
+    [self setActualSize:attr isInit:YES];
+    [sectionItemYs setObject:@(y + attr.frame.size.height) forKey:@(minCol)];
+    
     return attr;
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPathInHorizontal:(NSIndexPath *)indexPath{
+    UICollectionViewLayoutAttributes *attr = [self findItemAttributes:indexPath];
+    if(attr){
+        [self setActualSize:attr isInit:NO];
+        return attr;
+    }else{
+        attr = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
+    }
+    
     CGSize size = CGSizeZero;
     if(CGSizeEqualToSize(CGSizeZero,self.estimatedItemSize)){
         CGSize delegate_size = [self jhListViewFlowLayoutItemSizeForIndexPath:indexPath];
@@ -305,12 +324,6 @@
     }else{
         //autolayout
         size = self.estimatedItemSize;
-    }
-    
-    //optimize reuse
-    UICollectionViewLayoutAttributes *attr = [self findItemAttributes:indexPath];
-    if(!attr){
-        attr = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
     }
     
     CGFloat x = 0.0,y = 0.0;
@@ -352,18 +365,10 @@
     y = insets.top + (size.height + itemSpacing) * minCol;
     x = minX + ((columns > row) ? 0 : lineSpacing);
     
-    [sectionItemXs setObject:@(x + size.width) forKey:@(minCol)];
     attr.frame = CGRectMake(x, y, size.width, size.height);
     
-    //set real size
-    NSValue *value = [self.actualItemSizes objectForKey:indexPath];
-    if(value){
-        CGSize actualSize = [value CGSizeValue];
-        CGFloat actualWidth = actualSize.width;
-        attr.frame = CGRectMake(x, y, actualWidth, size.height);
-        [sectionItemXs setObject:@(x + actualWidth) forKey:@(minCol)];
-    }
-    
+    [self setActualSize:attr isInit:YES];
+    [sectionItemXs setObject:@(x + attr.frame.size.width) forKey:@(minCol)];
     return attr;
 }
 
@@ -385,24 +390,31 @@
     size.width = (size.width > maxWidth)? maxWidth : size.width;
     x = insets.left;
     
-    //从缓存中读取已存在的attr,防止zIndex丢失
-    UICollectionViewLayoutAttributes *attr = nil;
-    if(section < self.headerAttributes.count && isHeader){
-        attr = self.headerAttributes[section];
-    }else{
+    UICollectionViewLayoutAttributes *attr = [self findSectionAttributes:indexPath kind:elementKind];
+    if(!attr){
         attr = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:elementKind withIndexPath:indexPath];
     }
     
     //footer
     if (!isHeader) {
-        y = [self getItemMaxYinSection:section] + insets.bottom;
+        y = [self getFooterY:attr];
+        //需要同时处理上一个footer的位置
+        if(section > 0){
+            UICollectionViewLayoutAttributes *lastAttr = [self findSectionAttributes:[NSIndexPath indexPathForRow:0 inSection:section-1] kind:elementKind];
+            CGFloat y = [self getFooterY:lastAttr];
+            CGRect frame = lastAttr.frame;
+            frame.origin.y = y;
+            lastAttr.frame = frame;
+        }
     }else{
         y = [self getHeaderY:attr];
         //需要同时处理上一个header的位置
-        if(section-1 < self.headerAttributes.count && section > 0){
-            UICollectionViewLayoutAttributes *lastAttr = self.headerAttributes[section-1];
+        if(section > 0){
+            UICollectionViewLayoutAttributes *lastAttr = [self findSectionAttributes:[NSIndexPath indexPathForRow:0 inSection:section-1] kind:elementKind];
             CGFloat y = [self getHeaderY:lastAttr];
-            lastAttr.frame = CGRectMake(x, y, size.width, size.height);
+            CGRect frame = lastAttr.frame;
+            frame.origin.y = y;
+            lastAttr.frame = frame;
         }
     }
 
@@ -428,11 +440,8 @@
     size.height = (size.height > maxHeight)? maxHeight : size.height;
     y = insets.top;
     
-    //从缓存中读取已存在的attr,防止zIndex丢失
-    UICollectionViewLayoutAttributes *attr = nil;
-    if(section < self.headerAttributes.count && isHeader){
-        attr = self.headerAttributes[section];
-    }else{
+    UICollectionViewLayoutAttributes *attr = [self findSectionAttributes:indexPath kind:elementKind];
+    if(!attr){
         attr = [UICollectionViewLayoutAttributes layoutAttributesForSupplementaryViewOfKind:elementKind withIndexPath:indexPath];
     }
     
@@ -442,8 +451,8 @@
     }else{
         x = [self getHeaderX:attr];
         //需要同时处理上一个header的位置
-        if(section-1 < self.headerAttributes.count && section > 0){
-            UICollectionViewLayoutAttributes *lastAttr = self.headerAttributes[section-1];
+        if(section > 0){
+            UICollectionViewLayoutAttributes *lastAttr = [self findSectionAttributes:[NSIndexPath indexPathForRow:0 inSection:section-1] kind:elementKind];
             CGFloat x = [self getHeaderX:lastAttr];
             lastAttr.frame = CGRectMake(x, y, size.width, size.height);
         }
@@ -455,6 +464,83 @@
 
 
 #pragma mark convinient
+
+///autolayout 真值
+-(void)setActualSize:(UICollectionViewLayoutAttributes *)attributes isInit:(BOOL)isInit{
+    NSValue *value = [self.actualItemSizes objectForKey:attributes.indexPath];
+    CGRect originFrame = attributes.frame;
+    if(value){
+        if(JH_IsScrollDirectionVertical){
+            CGSize actualSize = [value CGSizeValue];
+            CGFloat actualHeight = actualSize.height;
+            CGRect frame = attributes.frame;
+            frame.size.height = actualHeight;
+            attributes.frame = frame;
+            //更新maxEnds
+            if(!isInit){
+                NSInteger section = attributes.indexPath.section;
+                if(section < self.maxEnds.count){
+                    NSMutableDictionary *sectionItemYs = self.maxEnds[section];
+                    //找到最短列
+                    NSInteger minCol = 0;
+                    CGFloat minY = [[sectionItemYs objectForKey:@(0)] floatValue];
+                    for (int col = 0; col < sectionItemYs.count; col++) {
+                        CGFloat tempY = [[sectionItemYs objectForKey:@(col)] floatValue];
+                        if(tempY < minY){
+                            minY = tempY;
+                            minCol = col;
+                        }
+                    }
+                    minY -= originFrame.size.height; //先减掉之前的值
+                    minY += attributes.frame.size.height;
+                    [sectionItemYs setObject:@(minY) forKey:@(minCol)];
+                }
+            }
+        }else{
+            CGSize actualSize = [value CGSizeValue];
+            CGFloat actualWidth = actualSize.width;
+            CGRect frame = attributes.frame;
+            frame.size.width = actualWidth;
+            attributes.frame = frame;
+            //更新maxEnds
+            if(!isInit){
+                NSInteger section = attributes.indexPath.section;
+                if(section < self.maxEnds.count){
+                    NSMutableDictionary *sectionItemXs = self.maxEnds[section];
+                    //找到最短行
+                    NSInteger minCol = 0;
+                    CGFloat minX = [[sectionItemXs objectForKey:@(0)] floatValue];
+                    for (int col = 0; col < sectionItemXs.count; col++) {
+                        CGFloat tempX = [[sectionItemXs objectForKey:@(col)] floatValue];
+                        if(tempX < minX){
+                            minX = tempX;
+                            minCol = col;
+                        }
+                    }
+                    minX -= originFrame.size.width; //先减掉之前的值
+                    minX += attributes.frame.size.width;
+                    [sectionItemXs setObject:@(minX) forKey:@(minCol)];
+                }
+            }
+        }
+    }
+}
+
+///footer位置
+-(CGFloat)getFooterY:(UICollectionViewLayoutAttributes *)attr{
+    NSInteger section = attr.indexPath.section;
+    UIEdgeInsets insets = [self jhListViewFlowLayoutInsetsAtSection:section];
+    CGFloat y = [self getItemMaxYinSection:section] + insets.bottom;
+    return y;
+}
+
+-(CGFloat)getFooterX:(UICollectionViewLayoutAttributes *)attr{
+    NSInteger section = attr.indexPath.section;
+    UIEdgeInsets insets = [self jhListViewFlowLayoutInsetsAtSection:section];
+    CGFloat x = [self getItemMaxYinSection:section] + insets.right;
+    return x;
+}
+
 ///获取header位置
 -(CGFloat)getHeaderY:(UICollectionViewLayoutAttributes *)attr{
     NSInteger section = attr.indexPath.section;
@@ -509,9 +595,29 @@
 
 - (UICollectionViewLayoutAttributes *)findItemAttributes:(NSIndexPath *)indexPath{
     for (UICollectionViewLayoutAttributes *attr in self.attributes) {
-        if(attr.representedElementCategory == UICollectionElementCategoryCell && [attr.indexPath compare:indexPath] == NSOrderedSame){
+        if(attr.representedElementCategory == UICollectionElementCategoryCell && attr.indexPath.section == indexPath.section && attr.indexPath.row == indexPath.row){
             return attr;
         }
+    }
+    return nil;
+}
+
+- (UICollectionViewLayoutAttributes *)findSectionAttributes:(NSIndexPath *)indexPath kind:(NSString *)kind{
+    if([kind isEqualToString:UICollectionElementKindSectionHeader]){
+        if(indexPath.section < self.headerAttributes.count){
+            return self.headerAttributes[indexPath.section];
+        }
+    }else{
+        if(indexPath.section < self.footerAttributes.count){
+            return self.footerAttributes[indexPath.section];
+        }
+    }
+    return nil;
+}
+
+- (UICollectionViewLayoutAttributes *)findDecorationAttributes:(NSIndexPath *)indexPath {
+    if(indexPath.section < self.decorationAttributes.count){
+        return self.decorationAttributes[indexPath.section];
     }
     return nil;
 }
@@ -524,13 +630,12 @@
     if(section < 0) section = 0;
     NSDictionary<NSNumber *,NSNumber *> *sectionYs = self.maxEnds[section];
     __block CGFloat maxY = [sectionYs objectForKey:@(0)].floatValue;
-    //NSLog(@"kkk section:%ld sectionYs:%@",section, sectionYs);
-    [sectionYs enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
-        CGFloat y = [obj floatValue];
-        if(y > maxY){
-            maxY = y;
+    for (int i = 0; i < sectionYs.count; i++) {
+        CGFloat tempY = [sectionYs objectForKey:@(i)].floatValue;
+        if(tempY > maxY){
+            maxY = tempY;
         }
-    }];
+    }
     return maxY;
 }
 
@@ -542,12 +647,12 @@
     if(section < 0) section = 0;
     NSDictionary<NSNumber *,NSNumber *> *sectionXs = self.maxEnds[section];
     __block CGFloat maxX = [sectionXs objectForKey:@(0)].floatValue;
-    [sectionXs enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
-        CGFloat x = [obj floatValue];
-        if(x > maxX){
-            maxX = x;
+    for (int i = 0; i < sectionXs.count; i++) {
+        CGFloat tempX = [sectionXs objectForKey:@(i)].floatValue;
+        if(tempX > maxX){
+            maxX = tempX;
         }
-    }];
+    }
     return maxX;
 }
 
@@ -696,7 +801,7 @@
 }
 
 - (NSString *)jhListViewFlowLayoutDecorationViewClassAtSection:(NSInteger)section{
-    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:decorationViewClassAtSection:)]){
+    if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:decorationViewClassAtSection:)]){
         return [self.delegate jh_listView:self.collectionView layout:self decorationViewClassAtSection:section];
     }
     return nil;

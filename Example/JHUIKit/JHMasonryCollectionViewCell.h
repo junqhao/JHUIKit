@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIImageView * imageView;
 @property (nonatomic, strong) UIButton *button;
 @property (nonatomic, strong) JHFood *food;
+@property (nonatomic, strong) NSIndexPath *indexPath;
 -(void)setData:(JHFood *)food;
 @end
 

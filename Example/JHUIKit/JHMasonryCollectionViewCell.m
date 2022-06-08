@@ -34,7 +34,15 @@
 -(void)setData:(JHFood *)food{
     self.opView.hidden = YES;
     self.food = food;
-    self.label.text = food.name;
+    
+    NSString *text = food.name;
+    if([text containsString:@"插入"]){
+        text = [NSString stringWithFormat:@"插入一条数据 插入位置 indexpath:%ld-%ld",self.indexPath.section,self.indexPath.row];
+    }else{
+        text = [NSString stringWithFormat:@"%@ indexpath:%ld-%ld",food.name,self.indexPath.section,self.indexPath.row];
+    }
+    
+    self.label.text = text;
     
     UIImage *image = [UIImage imageNamed:food.photo];
     self.imageView.image = image;
@@ -159,7 +167,7 @@
 -(void)routerEventWithName:(NSString *)eventName userInfo:(NSDictionary *)userInfo{
     if ([eventName isEqualToString:@"optSelected"]) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-        [dic setObject:self.getIndexPath forKey:@"indexPath"];
+        [dic setObject:self.indexPath forKey:@"indexPath"];
         self.opView.hidden = YES;
         self.button.selected = NO;
         [self.nextResponder routerEventWithName:eventName userInfo:[dic copy]];

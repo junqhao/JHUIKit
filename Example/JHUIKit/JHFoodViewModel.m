@@ -77,6 +77,7 @@
         UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:food.cell_reuse forIndexPath:indexPath];
         if(self.isAutoLayout){
             JHMasonryCollectionViewCell *jhCell = (JHMasonryCollectionViewCell *)cell;
+            [jhCell setIndexPath:indexPath];
             [jhCell setData:food];
         }else{
             JHFrameCollectionViewCell *jhCell = (JHFrameCollectionViewCell *)cell;
@@ -95,11 +96,13 @@
     JHCollectionHeaderFooterView *reusableView = nil;
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         iden = foodsection.header_reuse;
+        if(iden.length == 0) return nil;
         reusableView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:iden forIndexPath:indexPath];
        reusableView.titleLabel.text = [NSString stringWithFormat:@"SectionHeader-%@", foodsection.name];
         return reusableView;
     }else{
         iden = foodsection.footer_reuse;
+        if(iden.length == 0) return nil;
         reusableView = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:iden forIndexPath:indexPath];
         reusableView.titleLabel.text = [NSString stringWithFormat:@"SectionFooter-%@", foodsection.name];
         return  reusableView;
@@ -139,6 +142,11 @@
 }
 
 -(CGSize)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout headerSizeAtSection:(NSInteger)section{
+    JHFoodSection *foodsection = self.datas[section];
+    if (foodsection.header_reuse.length == 0) {
+        return CGSizeZero;
+    }
+    
     if(layout.scrollDirection == UICollectionViewScrollDirectionHorizontal){
         return CGSizeMake(30,CGRectGetHeight(collectionView.frame));
     }
@@ -146,6 +154,11 @@
 }
 
 -(CGSize)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout footerSizeAtSection:(NSInteger)section{
+    JHFoodSection *foodsection = self.datas[section];
+    if (foodsection.footer_reuse.length == 0) {
+        return CGSizeZero;
+    }
+    
     if(layout.scrollDirection == UICollectionViewScrollDirectionHorizontal){
         return CGSizeMake(30,CGRectGetHeight(collectionView.frame));
     }
@@ -191,6 +204,56 @@
 }
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    [scrollView.nextResponder routerEventWithName:@"scroll" userInfo:@{}];
+    //[scrollView.nextResponder routerEventWithName:@"scroll" userInfo:@{}];
+}
+
+-(void)insertFoodAt:(NSIndexPath *)indexPath{
+    JHFoodSection *foodsection = self.datas[indexPath.section];
+    NSInteger targetRow = indexPath.row + 1;
+    if(targetRow <= foodsection.list.count){
+        NSIndexPath *targetIndexPath = [NSIndexPath indexPathForRow:targetRow inSection:indexPath.section];
+        JHFood *food = [self randomFood:targetIndexPath];
+        [foodsection.list insertObject:food atIndex:targetRow];
+        if (self.insertBlock) {
+            self.insertBlock(1, targetIndexPath, self.datas);
+        }
+    }else{
+        NSLog(@"插入位置非法");
+    }
+}
+
+-(void)deleteFoodAt:(NSIndexPath *)indexPath{
+//    NSMutableArray *foodSection = self.data[indexPath.section];
+//    NSInteger targetRow = indexPath.row;
+//    NSInteger num = foodSection.count;
+//    if(num > 0){
+//        if (num > 1) {
+//            [foodSection removeObjectAtIndex:targetRow];
+//            [self.collectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:targetRow inSection:indexPath.section]]];
+//            NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
+//            [set addIndex:indexPath.section];
+//            [self.layout invalidateLayout];
+//            //[self.collectionView reloadSections:set];
+//            [self.collectionView reloadData];
+//        }else{
+//            //已经是最后一个元素 直接删除整个section
+//            [self.data removeObjectAtIndex:indexPath.section];
+//            NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
+//            [set addIndex:indexPath.section];
+//            [self.collectionView deleteSections:set];
+//            [self.layout invalidateLayout];
+//            [self.collectionView reloadData];
+//        }
+//    }else{
+//        NSLog(@"删除位置非法");
+//    }
+}
+
+-(JHFood *)randomFood:(NSIndexPath *)indexPath{
+    JHFood *f = [JHFood new];
+    f.cell_reuse = @"cell";
+    f.photo = @"sold_out";
+    f.name = [NSString stringWithFormat:@"插入一条数据 插入位置 indexpath:%ld-%ld",indexPath.section,indexPath.row];
+    return f;
 }
 @end

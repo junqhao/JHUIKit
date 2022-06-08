@@ -19,10 +19,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.viewModel = [[JHFoodViewModel alloc] init];
+    JHFoodViewModel *vm = [[JHFoodViewModel alloc] init];
+    self.viewModel = vm;
     self.viewModel.url = [[NSBundle mainBundle] pathForResource:@"FoodList" ofType:@"txt"];
-    //************* important **************
     self.viewModel.isAutoLayout = YES;
+    //************* important **************
     self.layout.estimatedItemSize = CGSizeMake(50, 50);
     WeakSelf(wself);
     self.viewModel.complete = ^(BOOL success, NSMutableArray<JHBaseSectionModel *> *datas) {
@@ -30,7 +31,18 @@
             [wself reloadData];
         }
     };
-    //[self requestData];
+    vm.insertBlock = ^(BOOL success, NSIndexPath * _Nonnull indexPath, NSMutableArray<JHBaseSectionModel *> * _Nonnull datas) {
+        if(success){
+            CGPoint offset = self.listView.contentOffset;
+            [self.listView performBatchUpdates:^{
+                [self.listView insertItemsAtIndexPaths:@[indexPath]];
+            } completion:^(BOOL finished) {
+                self.listView.contentOffset = offset;
+                //防止不调用cellforitem 导致indexpath错误
+                //[self.listView reloadData];
+            }];
+        }
+    };
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -53,7 +65,7 @@
         NSInteger opt = [userInfo[@"opt"] integerValue];
         NSIndexPath *indexPath = userInfo[@"indexPath"];
         if (opt == JHMoreOptionBridge.insert) {
-           // [self insertFoodAt:indexPath];
+            [self.viewModel insertFoodAt:indexPath];
         }else if(opt == JHMoreOptionBridge.delete){
             //[self deleteFoodAt:indexPath];
         }else{
@@ -66,56 +78,6 @@
     }
 }
 
-//-(Food *)randomFood:(NSIndexPath *)indexPath{
-//    Food *f = [Food new];
-//    f.picName = [NSString stringWithFormat:@"food_%ld",indexPath.row % 10];
-//    NSInteger randomLength = arc4random() % (kRandomAlphabet.length) + 1;
-//    NSMutableString *string = [NSMutableString string];
-//    for (int i = 0; i<randomLength; i++) {
-//        [string appendFormat:@"%C",[kRandomAlphabet characterAtIndex:i]];
-//    }
-//    f.name = string;
-//    return f;
-//}
 
-
-//-(void)insertFoodAt:(NSIndexPath *)indexPath{
-//    NSMutableArray *foodSection = self.data[indexPath.section];
-//    NSInteger targetRow = indexPath.row + 1;
-//    if(targetRow <= foodSection.count){
-//        [foodSection insertObject:[self randomFood:[NSIndexPath indexPathForRow:targetRow inSection:indexPath.section]] atIndex:targetRow];
-//        [self.collectionView insertItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:targetRow inSection:indexPath.section]]];
-//        [self.collectionView reloadData];
-//    }else{
-//        NSLog(@"插入位置非法");
-//    }
-//}
-//
-//-(void)deleteFoodAt:(NSIndexPath *)indexPath{
-//    NSMutableArray *foodSection = self.data[indexPath.section];
-//    NSInteger targetRow = indexPath.row;
-//    NSInteger num = foodSection.count;
-//    if(num > 0){
-//        if (num > 1) {
-//            [foodSection removeObjectAtIndex:targetRow];
-//            [self.collectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:targetRow inSection:indexPath.section]]];
-//            NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
-//            [set addIndex:indexPath.section];
-//            [self.layout invalidateLayout];
-//            //[self.collectionView reloadSections:set];
-//            [self.collectionView reloadData];
-//        }else{
-//            //已经是最后一个元素 直接删除整个section
-//            [self.data removeObjectAtIndex:indexPath.section];
-//            NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
-//            [set addIndex:indexPath.section];
-//            [self.collectionView deleteSections:set];
-//            [self.layout invalidateLayout];
-//            [self.collectionView reloadData];
-//        }
-//    }else{
-//        NSLog(@"删除位置非法");
-//    }
-//}
 
 @end
