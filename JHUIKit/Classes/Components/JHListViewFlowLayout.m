@@ -519,12 +519,11 @@ static char *COL = "JHCOL";
                 NSInteger section = attributes.indexPath.section;
                 if(section < self.maxEnds.count){
                     NSMutableDictionary *sectionItemYs = self.maxEnds[section];
-                    NSInteger col = attributes.col;
-                    if(col != -1){
-                        CGFloat colY = [[sectionItemYs objectForKey:@(col)] floatValue];
+                    if(attributes.col != -1){
+                        CGFloat colY = [[sectionItemYs objectForKey:@(attributes.col)] floatValue];
                         colY -= originFrame.size.height; //先减掉之前的值
                         colY += attributes.frame.size.height;
-                        [sectionItemYs setObject:@(colY) forKey:@(col)];
+                        [sectionItemYs setObject:@(colY) forKey:@(attributes.col)];
                     }
                 }
             }
