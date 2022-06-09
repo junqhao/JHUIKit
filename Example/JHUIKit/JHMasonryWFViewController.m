@@ -74,7 +74,7 @@
     }else if([eventName isEqualToString:@"updateAttributes"]){
         NSValue *value = userInfo[@"size"];
         NSIndexPath *indexPath =userInfo[@"indexPath"];
-        [self.layout setCellSize:[value CGSizeValue]  atIndexPath:indexPath];
+        [self.layout setActualCellSize:[value CGSizeValue]  atIndexPath:indexPath];
     }
 }
 

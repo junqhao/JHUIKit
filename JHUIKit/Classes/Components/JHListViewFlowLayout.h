@@ -31,10 +31,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)jh_listView:(UICollectionView *)collectionView layout:(JHListViewFlowLayout *)layout decorationViewClassAtSection:(NSInteger)section;
 @end
 
+@interface UICollectionViewLayoutAttributes (JHAddition)
+@property(nonatomic,assign) NSInteger col;
+@end
+
+
 @interface JHListViewFlowLayout : UICollectionViewFlowLayout
 @property (nonatomic,weak) id<JHListViewDelegateFlowLayout> delegate;
 
--(void)setCellSize:(CGSize)size atIndexPath:(NSIndexPath *)indexPath;
+-(void)setActualCellSize:(CGSize)size atIndexPath:(NSIndexPath *)indexPath;
 
 -(void)resetActualSizes;
 @end
