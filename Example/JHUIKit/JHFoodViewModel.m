@@ -223,30 +223,25 @@
 }
 
 -(void)deleteFoodAt:(NSIndexPath *)indexPath{
-//    NSMutableArray *foodSection = self.data[indexPath.section];
-//    NSInteger targetRow = indexPath.row;
-//    NSInteger num = foodSection.count;
-//    if(num > 0){
-//        if (num > 1) {
-//            [foodSection removeObjectAtIndex:targetRow];
-//            [self.collectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:targetRow inSection:indexPath.section]]];
-//            NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
-//            [set addIndex:indexPath.section];
-//            [self.layout invalidateLayout];
-//            //[self.collectionView reloadSections:set];
-//            [self.collectionView reloadData];
-//        }else{
-//            //已经是最后一个元素 直接删除整个section
-//            [self.data removeObjectAtIndex:indexPath.section];
-//            NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
-//            [set addIndex:indexPath.section];
-//            [self.collectionView deleteSections:set];
-//            [self.layout invalidateLayout];
-//            [self.collectionView reloadData];
-//        }
-//    }else{
-//        NSLog(@"删除位置非法");
-//    }
+    JHFoodSection *foodsection = self.datas[indexPath.section];
+    NSInteger targetRow = indexPath.row;
+    NSInteger num = foodsection.list.count;
+    if(num > 0){
+        if (num > 1) {
+            [foodsection.list removeObjectAtIndex:targetRow];
+            if(self.deleteBlock){
+                self.deleteBlock(YES, indexPath, self.datas, NO);
+            }
+        }else{
+            //已经是最后一个元素 直接删除整个section
+            [self.datas removeObjectAtIndex:indexPath.section];
+            if(self.deleteBlock){
+                self.deleteBlock(YES, indexPath, self.datas, YES);
+            }
+        }
+    }else{
+        NSLog(@"删除位置非法");
+    }
 }
 
 -(JHFood *)randomFood:(NSIndexPath *)indexPath{

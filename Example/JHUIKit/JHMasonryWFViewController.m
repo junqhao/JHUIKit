@@ -37,11 +37,29 @@
             [self.listView performBatchUpdates:^{
                 [self.listView insertItemsAtIndexPaths:@[indexPath]];
             } completion:^(BOOL finished) {
-                self.listView.contentOffset = offset;
                 //防止不调用cellforitem 导致indexpath错误
-                //[self.listView reloadData];
+                [self.listView reloadData];
+                self.listView.contentOffset = offset;
             }];
         }
+    };
+    vm.deleteBlock = ^(BOOL success, NSIndexPath * _Nonnull indexPath, NSMutableArray<JHBaseSectionModel *> * _Nonnull datas, BOOL isLastItemInSection) {
+        if(!success) return;
+        CGPoint offset = self.listView.contentOffset;
+        [self.listView performBatchUpdates:^{
+            if(!isLastItemInSection){
+                [self.listView deleteItemsAtIndexPaths:@[indexPath]];
+            }else{
+                NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
+                [set addIndex:indexPath.section];
+                [self.listView deleteSections:set];
+            }
+        } completion:^(BOOL finished) {
+            [self.listView reloadData];
+            if (offset.y < self.listView.contentSize.height) {
+                self.listView.contentOffset = offset;
+            }
+        }];
     };
 }
 
@@ -67,7 +85,7 @@
         if (opt == JHMoreOptionBridge.insert) {
             [self.viewModel insertFoodAt:indexPath];
         }else if(opt == JHMoreOptionBridge.delete){
-            //[self deleteFoodAt:indexPath];
+            [self.viewModel deleteFoodAt:indexPath];
         }else{
             
         }
