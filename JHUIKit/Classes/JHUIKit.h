@@ -8,11 +8,14 @@
 #ifndef JHUIKit_h
 #define JHUIKit_h
 
+#import "JHBaseListView.h"
 #import "JHBaseModel.h"
-#import "UIResponder+JHRouter.h"
-#import "UIDevice+JHAddition.h"
 #import "JHBaseViewController.h"
 #import "JHBaseViewModel.h"
 #import "JHListViewFlowLayout.h"
+
+#import "UIResponder+JHRouter.h"
+#import "UIDevice+JHAddition.h"
+#import "UICollectionViewCell+JHAddition.h"
 
 #endif /* JHUIKit_h */

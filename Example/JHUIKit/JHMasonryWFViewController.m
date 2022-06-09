@@ -38,7 +38,7 @@
                 [self.listView insertItemsAtIndexPaths:@[indexPath]];
             } completion:^(BOOL finished) {
                 //防止不调用cellforitem 导致indexpath错误
-                [self.listView reloadData];
+                [self reloadData];
                 self.listView.contentOffset = offset;
             }];
         }
@@ -55,7 +55,7 @@
                 [self.listView deleteSections:set];
             }
         } completion:^(BOOL finished) {
-            [self.listView reloadData];
+            [self reloadData];
             if (offset.y < self.listView.contentSize.height) {
                 self.listView.contentOffset = offset;
             }
