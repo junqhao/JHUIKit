@@ -22,7 +22,7 @@ pod 'JHUIKit'
 
 ## Author
 
-junqhao, junqhao@gmail.com
+junqhao, junqing_hao@qq.com
 
 ## License
 
