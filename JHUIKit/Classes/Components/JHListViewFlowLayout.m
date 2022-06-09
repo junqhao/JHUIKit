@@ -33,20 +33,16 @@ static char *COL = "JHCOL";
 @interface JHListViewFlowLayout ()
 @property (nonatomic, assign) CGFloat contentWidth;
 @property (nonatomic, assign) CGFloat contentHeight;
-@property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *attributes;
+@property (nonatomic, strong) NSMutableArray <NSMutableArray<__kindof UICollectionViewLayoutAttributes *>*> *groupedAttributes;
 @property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *headerAttributes;
 @property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *footerAttributes;
 @property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *decorationAttributes;
-
-@property (nonatomic, strong) NSMutableArray <NSMutableArray<__kindof UICollectionViewLayoutAttributes *>*> *groupedAttributes;
 
 //全部section的全部column的maxY或X
 @property (nonatomic, strong) NSMutableArray<NSMutableDictionary *> *maxEnds;
 //updates
 @property (nonatomic, strong) NSMutableArray<NSIndexPath *> *insertIndexPaths;
 @property (nonatomic, strong) NSMutableArray<NSIndexPath *> *deleteIndexPaths;
-
-@property (nonatomic, assign) BOOL isPinToTop;
 
 @property (nonatomic,strong) NSMutableDictionary *actualItemSizes;
 @end
@@ -56,7 +52,6 @@ static char *COL = "JHCOL";
 #pragma mark initial
 - (instancetype)init{
     if (self = [super init]) {
-        self.attributes = [[NSMutableArray alloc] init];
         self.groupedAttributes = [[NSMutableArray alloc] init];
         self.headerAttributes = [[NSMutableArray alloc] init];
         self.footerAttributes = [[NSMutableArray alloc] init];
@@ -68,7 +63,6 @@ static char *COL = "JHCOL";
 }
 
 - (void)resetData{
-    [_attributes removeAllObjects];
     [_groupedAttributes removeAllObjects];
     [_headerAttributes removeAllObjects];
     [_footerAttributes removeAllObjects];
@@ -105,7 +99,6 @@ static char *COL = "JHCOL";
         UICollectionViewLayoutAttributes * headerAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionHeader atIndexPath:sectionIndexPath];
         if (headerAttr) {
             [group addObject:headerAttr];
-            [_attributes addObject:headerAttr];
             [_headerAttributes addObject:headerAttr];
         }
         
@@ -115,7 +108,6 @@ static char *COL = "JHCOL";
             UICollectionViewLayoutAttributes * itemAttr = [self layoutAttributesForItemAtIndexPath:indexPath];
             if (itemAttr) {
                 [group addObject:itemAttr];
-                [_attributes addObject:itemAttr];
             }
         }
         
@@ -123,7 +115,6 @@ static char *COL = "JHCOL";
         UICollectionViewLayoutAttributes * footerAttr = [self layoutAttributesForSupplementaryViewOfKind:UICollectionElementKindSectionFooter atIndexPath:sectionIndexPath];
         if (footerAttr) {
             [group addObject:footerAttr];
-            [_attributes addObject:footerAttr];
             [_footerAttributes addObject:footerAttr];
         }
         
@@ -131,7 +122,6 @@ static char *COL = "JHCOL";
         UICollectionViewLayoutAttributes *decoAttr = [self layoutAttributesForDecorationViewOfKind:@"" atIndexPath:sectionIndexPath];
         if(decoAttr){
             [group addObject:decoAttr];
-            [_attributes addObject:decoAttr];
             [_decorationAttributes addObject:decoAttr];
         }
     }
@@ -144,20 +134,22 @@ static char *COL = "JHCOL";
 - (NSArray<__kindof UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect{
     //return self.attributes;
     NSMutableArray *results = [NSMutableArray arrayWithCapacity:0];
-    if (JH_IsScrollDirectionVertical) {
-        CGFloat maxY = CGRectGetMaxY(rect);
-        CGFloat minY = CGRectGetMinY(rect);
-        for (UICollectionViewLayoutAttributes *attr in _attributes) {
-            if(CGRectGetMaxY(attr.frame) >= minY && CGRectGetMinY(attr.frame) <= maxY){
-                [results addObject:attr];
+    for (NSMutableArray *group in self.groupedAttributes) {
+        if (JH_IsScrollDirectionVertical) {
+            CGFloat maxY = CGRectGetMaxY(rect);
+            CGFloat minY = CGRectGetMinY(rect);
+            for (UICollectionViewLayoutAttributes *attr in group) {
+                if(CGRectGetMaxY(attr.frame) >= minY && CGRectGetMinY(attr.frame) <= maxY){
+                    [results addObject:attr];
+                }
             }
-        }
-    }else{
-        CGFloat maxX = CGRectGetMaxX(rect);
-        CGFloat minX = CGRectGetMinX(rect);
-        for (UICollectionViewLayoutAttributes *attr in _attributes) {
-            if(CGRectGetMaxX(attr.frame) >= minX && CGRectGetMinX(attr.frame) <= maxX){
-                [results addObject:attr];
+        }else{
+            CGFloat maxX = CGRectGetMaxX(rect);
+            CGFloat minX = CGRectGetMinX(rect);
+            for (UICollectionViewLayoutAttributes *attr in group) {
+                if(CGRectGetMaxX(attr.frame) >= minX && CGRectGetMinX(attr.frame) <= maxX){
+                    [results addObject:attr];
+                }
             }
         }
     }
@@ -165,6 +157,10 @@ static char *COL = "JHCOL";
 }
 
 -(BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds{
+    //return NO;
+    if([self getPinToTop]){
+        return YES;
+    }
     return NO;
 }
 
@@ -625,9 +621,11 @@ static char *COL = "JHCOL";
 }
 
 - (UICollectionViewLayoutAttributes *)findItemAttributes:(NSIndexPath *)indexPath{
-    for (UICollectionViewLayoutAttributes *attr in self.attributes) {
-        if(attr.representedElementCategory == UICollectionElementCategoryCell && attr.indexPath.section == indexPath.section && attr.indexPath.row == indexPath.row){
-            return attr;
+    for (NSMutableArray *group in self.groupedAttributes) {
+        for (UICollectionViewLayoutAttributes *attr in group) {
+            if(attr.representedElementCategory == UICollectionElementCategoryCell && attr.indexPath.section == indexPath.section && attr.indexPath.row == indexPath.row){
+                return attr;
+            }
         }
     }
     return nil;
@@ -870,7 +868,6 @@ static char *COL = "JHCOL";
 }
 
 - (BOOL)jhListViewFlowLayoutHeaderPinToTopAtSection:(NSInteger)section{
-    return 0;
     if(self.delegate && [self.delegate respondsToSelector:@selector(jh_listView:layout:headerPinToTopAtSection:)]){
         return [self.delegate jh_listView:self.collectionView layout:self headerPinToTopAtSection:section];
     }

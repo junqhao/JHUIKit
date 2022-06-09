@@ -23,7 +23,7 @@
 -(instancetype)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
         self.tagView.backgroundColor = UIColor.blueColor;
-        //self.backgroundColor = UIColor.redColor;
+        self.backgroundColor = UIColor.orangeColor;
     }
     return self;
 }
