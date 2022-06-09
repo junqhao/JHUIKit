@@ -33,6 +33,7 @@ static char *COL = "JHCOL";
 @interface JHListViewFlowLayout ()
 @property (nonatomic, assign) CGFloat contentWidth;
 @property (nonatomic, assign) CGFloat contentHeight;
+
 @property (nonatomic, strong) NSMutableArray <NSMutableArray<__kindof UICollectionViewLayoutAttributes *>*> *groupedAttributes;
 @property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *headerAttributes;
 @property (nonatomic, strong) NSMutableArray <__kindof UICollectionViewLayoutAttributes *> *footerAttributes;
@@ -40,11 +41,13 @@ static char *COL = "JHCOL";
 
 //全部section的全部column的maxY或X
 @property (nonatomic, strong) NSMutableArray<NSMutableDictionary *> *maxEnds;
-//updates
-@property (nonatomic, strong) NSMutableArray<NSIndexPath *> *insertIndexPaths;
-@property (nonatomic, strong) NSMutableArray<NSIndexPath *> *deleteIndexPaths;
-
+//cell在autolayout后的真实size
 @property (nonatomic,strong) NSMutableDictionary *actualItemSizes;
+
+//updates
+//@property (nonatomic, strong) NSMutableArray<NSIndexPath *> *insertIndexPaths;
+//@property (nonatomic, strong) NSMutableArray<NSIndexPath *> *deleteIndexPaths;
+
 @end
 
 @implementation JHListViewFlowLayout
@@ -197,63 +200,6 @@ static char *COL = "JHCOL";
     attr.zIndex = -1;
     return attr;
 }
-
-#pragma mark overrides -updates
-
-//-(void)finalizeCollectionViewUpdates{
-//    [super finalizeCollectionViewUpdates];
-//    self.deleteIndexPaths = nil;
-//    self.insertIndexPaths = nil;
-//}
-//
-//-(void)prepareForCollectionViewUpdates:(NSArray<UICollectionViewUpdateItem *> *)updateItems{
-//    [super prepareForCollectionViewUpdates:updateItems];
-//    //删除整个section时updateItems.count==1,row = NSInteger.MAX
-////    for (UICollectionViewUpdateItem *item in updateItems) {
-////        NSLog(@"before:%@ after:%@",item.indexPathBeforeUpdate,item.indexPathAfterUpdate);
-////    }
-//    self.deleteIndexPaths = [NSMutableArray array];
-//    self.insertIndexPaths = [NSMutableArray array];
-//
-//    for (UICollectionViewUpdateItem *update in updateItems)
-//    {
-//        if (update.updateAction == UICollectionUpdateActionDelete)
-//        {
-//            [self.deleteIndexPaths addObject:update.indexPathBeforeUpdate];
-//        }
-//        else if (update.updateAction == UICollectionUpdateActionInsert)
-//        {
-//            [self.insertIndexPaths addObject:update.indexPathAfterUpdate];
-//        }
-//    }
-//}
-
-//-(UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath{
-//    UICollectionViewLayoutAttributes *attributes = [self findItemAttributes:itemIndexPath];
-//    if ([self.insertIndexPaths containsObject:itemIndexPath])
-//    {
-//        UICollectionViewLayoutAttributes *attributesCopy = [attributes copy];
-//        [self setActualSize:attributesCopy];
-//        attributesCopy.alpha = 0.0;
-//        attributesCopy.transform = CGAffineTransformMakeScale(.5, .5);
-//        return attributesCopy;
-//    }
-//    [self setActualSize:attributes];
-//    return attributes;
-//}
-//
-//-(UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath{
-//    UICollectionViewLayoutAttributes *attributes = [self findItemAttributes:itemIndexPath];
-//    if ([self.deleteIndexPaths containsObject:itemIndexPath])
-//    {
-//        if (!attributes){
-//            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
-//        }
-//        attributes.alpha = 0.0;
-//        attributes.transform = CGAffineTransformMakeScale(.5, .5);
-//    }
-//    return attributes;
-//}
 
 #pragma mark custom overrides
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPathInVertical:(NSIndexPath *)indexPath{
@@ -497,6 +443,61 @@ static char *COL = "JHCOL";
     return attr;
 }
 
+//#pragma mark custom overrides updates
+//-(void)finalizeCollectionViewUpdates{
+//    [super finalizeCollectionViewUpdates];
+//    self.deleteIndexPaths = nil;
+//    self.insertIndexPaths = nil;
+//}
+//
+//-(void)prepareForCollectionViewUpdates:(NSArray<UICollectionViewUpdateItem *> *)updateItems{
+//    [super prepareForCollectionViewUpdates:updateItems];
+//    //删除整个section时updateItems.count==1,row = NSInteger.MAX
+////    for (UICollectionViewUpdateItem *item in updateItems) {
+////        NSLog(@"before:%@ after:%@",item.indexPathBeforeUpdate,item.indexPathAfterUpdate);
+////    }
+//    self.deleteIndexPaths = [NSMutableArray array];
+//    self.insertIndexPaths = [NSMutableArray array];
+//
+//    for (UICollectionViewUpdateItem *update in updateItems)
+//    {
+//        if (update.updateAction == UICollectionUpdateActionDelete)
+//        {
+//            [self.deleteIndexPaths addObject:update.indexPathBeforeUpdate];
+//        }
+//        else if (update.updateAction == UICollectionUpdateActionInsert)
+//        {
+//            [self.insertIndexPaths addObject:update.indexPathAfterUpdate];
+//        }
+//    }
+//}
+//
+//-(UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath{
+//    UICollectionViewLayoutAttributes *attributes = [self findItemAttributes:itemIndexPath];
+//    if ([self.insertIndexPaths containsObject:itemIndexPath])
+//    {
+//        UICollectionViewLayoutAttributes *attributesCopy = [attributes copy];
+//        [self setActualSize:attributesCopy];
+//        attributesCopy.alpha = 0.0;
+//        attributesCopy.transform = CGAffineTransformMakeScale(.5, .5);
+//        return attributesCopy;
+//    }
+//    [self setActualSize:attributes];
+//    return attributes;
+//}
+//
+//-(UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath{
+//    UICollectionViewLayoutAttributes *attributes = [self findItemAttributes:itemIndexPath];
+//    if ([self.deleteIndexPaths containsObject:itemIndexPath])
+//    {
+//        if (!attributes){
+//            attributes = [self layoutAttributesForItemAtIndexPath:itemIndexPath];
+//        }
+//        attributes.alpha = 0.0;
+//        attributes.transform = CGAffineTransformMakeScale(.5, .5);
+//    }
+//    return attributes;
+//}
 
 #pragma mark convinient
 
@@ -812,10 +813,6 @@ static char *COL = "JHCOL";
     if(indexPath){
         [self.actualItemSizes setObject:[NSValue valueWithCGSize:size] forKey:indexPath];
     }
-}
-
--(void)resetActualSizes{
-    [_actualItemSizes removeAllObjects];
 }
 
 #pragma mark delegate

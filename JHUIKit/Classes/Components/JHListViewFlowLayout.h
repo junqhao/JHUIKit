@@ -41,7 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)setActualCellSize:(CGSize)size atIndexPath:(NSIndexPath *)indexPath;
 
--(void)resetActualSizes;
 @end
 
 NS_ASSUME_NONNULL_END
