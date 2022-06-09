@@ -36,7 +36,7 @@
     if (self = [super initWithFrame:frame]) {
         self.tagView = [UIView new];
         [self addSubview:self.tagView];
-        [self.tagView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        [self.tagView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.right.equalTo(self);
             make.size.mas_equalTo(CGSizeMake(20, 20));
         }];
@@ -46,12 +46,11 @@
 
 -(void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes{
     [super applyLayoutAttributes:layoutAttributes];
-    [self.tagView removeFromSuperview];
-    [self addSubview:self.tagView];
-    [self.tagView mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.right.equalTo(self);
-        make.size.mas_equalTo(CGSizeMake(20, 20));
-    }];
-    
+//    [self.tagView removeFromSuperview];
+//    [self addSubview:self.tagView];
+//    [self.tagView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//        make.top.right.equalTo(self);
+//        make.size.mas_equalTo(CGSizeMake(20, 20));
+//    }];
 }
 @end
