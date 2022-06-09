@@ -531,6 +531,9 @@ static char *COL = "JHCOL";
         }else{
             CGSize actualSize = [value CGSizeValue];
             CGFloat actualWidth = actualSize.width;
+            if (actualWidth == originFrame.size.width) {
+                return;
+            }
             CGRect frame = attributes.frame;
             frame.size.width = actualWidth;
             attributes.frame = frame;
