@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  JHUIKit: a4cce82a31cef7e5775aecf38ae86cf5eacd61f4
+  JHUIKit: 6fbcd48ddf292b8879628639fbd92e882a84d1ee
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30

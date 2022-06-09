@@ -7,9 +7,6 @@
 
 #import "JHBaseViewController.h"
 #import "UIDevice+JHAddition.h"
-#import "JHListViewFlowLayout.h"
-#import "JHBaseViewModel.h"
-
 
 @interface JHBaseViewController ()
 
@@ -25,7 +22,7 @@
     self.viewModel = [[JHBaseViewModel alloc] init];
     self.layout = [[JHListViewFlowLayout alloc] init];
     self.layout.delegate = self.viewModel;
-    self.listView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, UIDevice.jh_aboveNavigationBarHeight, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame)-UIDevice.jh_aboveNavigationBarHeight) collectionViewLayout:self.layout];
+    self.listView = [[JHBaseListView alloc] initWithFrame:CGRectMake(0, UIDevice.jh_aboveNavigationBarHeight, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame)-UIDevice.jh_aboveNavigationBarHeight) collectionViewLayout:self.layout];
     [self.view addSubview:self.listView];
     self.listView.contentInset = UIEdgeInsetsMake(0, 0, UIDevice.jh_safeAreaInsets.bottom, 0);
     self.listView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;

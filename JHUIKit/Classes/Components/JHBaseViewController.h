@@ -6,14 +6,15 @@
 //
 
 #import <UIKit/UIKit.h>
-@class JHListViewFlowLayout;
-@class JHBaseViewModel;
+#import "JHBaseListView.h"
+#import "JHListViewFlowLayout.h"
+#import "JHBaseViewModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JHBaseViewController : UIViewController
-@property(nonatomic,strong) UICollectionView *listView;
-@property(nonatomic,strong) JHListViewFlowLayout *layout;
+@property(nonatomic,strong) __kindof JHBaseListView *listView;
+@property(nonatomic,strong) __kindof JHListViewFlowLayout *layout;
 @property(nonatomic,strong) __kindof JHBaseViewModel *viewModel;
 
 -(void)registerReusable;
