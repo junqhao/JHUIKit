@@ -68,6 +68,9 @@
                 controller = [[JHHoWFViewController alloc] init];
             }
                 break;
+            case 4 :{
+                controller = [[JHCompViewController alloc] init];
+            }   break;
         }
         if(controller)
             [self.navigationController pushViewController:controller animated:YES];

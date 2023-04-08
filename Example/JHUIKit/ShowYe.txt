@@ -27,4 +27,15 @@
             "type":3,
             "list": []
         }]
-}]
+},{
+        "name": "UICompositionalLayout",
+        "header_reuse": "header",
+        "footer_reuse": "footer",
+        "list": [{
+            "name": "CompositionalLayout瀑布流",
+            "photo": "",
+            "cell_reuse": "cell",
+            "type":4,
+            "list": []
+        }]
+ }]

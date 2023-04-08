@@ -19,8 +19,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    JHFoodViewModel *vm = [[JHFoodViewModel alloc] init];
-    self.viewModel = vm;
+    self.viewModel = [[JHFoodViewModel alloc] init];
     self.viewModel.url = [[NSBundle mainBundle] pathForResource:@"FoodList" ofType:@"txt"];
     self.viewModel.isAutoLayout = YES;
     //************* important **************
@@ -31,33 +30,33 @@
             [wself reloadData];
         }
     };
-    vm.insertBlock = ^(BOOL success, NSIndexPath * _Nonnull indexPath, NSMutableArray<JHBaseSectionModel *> * _Nonnull datas) {
+    self.viewModel.insertBlock = ^(BOOL success, NSIndexPath * _Nonnull indexPath, NSMutableArray<JHBaseSectionModel *> * _Nonnull datas) {
         if(success){
-            CGPoint offset = self.listView.contentOffset;
-            [self.listView performBatchUpdates:^{
-                [self.listView insertItemsAtIndexPaths:@[indexPath]];
+            CGPoint offset = wself.listView.contentOffset;
+            [wself.listView performBatchUpdates:^{
+                [wself.listView insertItemsAtIndexPaths:@[indexPath]];
             } completion:^(BOOL finished) {
                 //防止不调用cellforitem 导致indexpath错误
-                [self reloadData];
-                self.listView.contentOffset = offset;
+                [wself reloadData];
+                wself.listView.contentOffset = offset;
             }];
         }
     };
-    vm.deleteBlock = ^(BOOL success, NSIndexPath * _Nonnull indexPath, NSMutableArray<JHBaseSectionModel *> * _Nonnull datas, BOOL isLastItemInSection) {
+    self.viewModel.deleteBlock = ^(BOOL success, NSIndexPath * _Nonnull indexPath, NSMutableArray<JHBaseSectionModel *> * _Nonnull datas, BOOL isLastItemInSection) {
         if(!success) return;
-        CGPoint offset = self.listView.contentOffset;
-        [self.listView performBatchUpdates:^{
+        CGPoint offset = wself.listView.contentOffset;
+        [wself.listView performBatchUpdates:^{
             if(!isLastItemInSection){
-                [self.listView deleteItemsAtIndexPaths:@[indexPath]];
+                [wself.listView deleteItemsAtIndexPaths:@[indexPath]];
             }else{
                 NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
                 [set addIndex:indexPath.section];
-                [self.listView deleteSections:set];
+                [wself.listView deleteSections:set];
             }
         } completion:^(BOOL finished) {
-            [self reloadData];
-            if (offset.y < self.listView.contentSize.height) {
-                self.listView.contentOffset = offset;
+            [wself reloadData];
+            if (offset.y < wself.listView.contentSize.height) {
+                wself.listView.contentOffset = offset;
             }
         }];
     };

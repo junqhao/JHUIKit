@@ -13,7 +13,7 @@ struct JHMoreOption : OptionSet{
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
-    public static let none = JHMoreOption(rawValue: 0)
+    public static let none = JHMoreOption([])
     public static let insert = JHMoreOption(rawValue: 1 << 0)
     public static let delete = JHMoreOption(rawValue: 1 << 1)
     public static let all : JHMoreOption = [insert,delete]

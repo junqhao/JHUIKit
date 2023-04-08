@@ -22,6 +22,7 @@
 		44CBB0C5284B8AB50038FFCB /* JHMoreOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CBB0C0284B8AB50038FFCB /* JHMoreOptionView.swift */; };
 		44CBB0C6284B8AB50038FFCB /* JHCollectionDecorationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 44CBB0C1284B8AB50038FFCB /* JHCollectionDecorationView.m */; };
 		44CBB0C7284B8AB50038FFCB /* JHCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 44CBB0C2284B8AB50038FFCB /* JHCollectionViewCell.m */; };
+		44FE435B285B13C6009A3E02 /* JHCompViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44FE435A285B13C6009A3E02 /* JHCompViewController.swift */; };
 		5718F5CE5210C10DDF23A5E3 /* Pods_JHUIKit_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B3B63B49FCEF0152BB9944A /* Pods_JHUIKit_Example.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
@@ -84,6 +85,7 @@
 		44CBB0C1284B8AB50038FFCB /* JHCollectionDecorationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHCollectionDecorationView.m; sourceTree = "<group>"; };
 		44CBB0C2284B8AB50038FFCB /* JHCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHCollectionViewCell.m; sourceTree = "<group>"; };
 		44CBB0CC284B8F100038FFCB /* JHUIKit_Example.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JHUIKit_Example.pch; sourceTree = "<group>"; };
+		44FE435A285B13C6009A3E02 /* JHCompViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JHCompViewController.swift; sourceTree = "<group>"; };
 		55FB124B93DF46050E6BAFA7 /* Pods-JHUIKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JHUIKit_Example.release.xcconfig"; path = "Target Support Files/Pods-JHUIKit_Example/Pods-JHUIKit_Example.release.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* JHUIKit_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JHUIKit_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -107,7 +109,7 @@
 		6E669F18AE9CFB789DAC938A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		93825B8EF59ADF44E937CD79 /* JHUIKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = JHUIKit.podspec; path = ../JHUIKit.podspec; sourceTree = "<group>"; };
+		93825B8EF59ADF44E937CD79 /* JHUIKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = JHUIKit.podspec; path = ../JHUIKit.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9B3B63B49FCEF0152BB9944A /* Pods_JHUIKit_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JHUIKit_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CCAFCFE28DCCC9743B7FC26 /* Pods-JHUIKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JHUIKit_Tests.debug.xcconfig"; path = "Target Support Files/Pods-JHUIKit_Tests/Pods-JHUIKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		B547BB79111C641ECFD15033 /* Pods-JHUIKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JHUIKit_Tests.release.xcconfig"; path = "Target Support Files/Pods-JHUIKit_Tests/Pods-JHUIKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				447DA0D8284DE6EC00B2DE7C /* JHMasonryWFViewController.m */,
 				447DA0E0285049A200B2DE7C /* JHHoWFViewController.h */,
 				447DA0E1285049A200B2DE7C /* JHHoWFViewController.m */,
+				44FE435A285B13C6009A3E02 /* JHCompViewController.swift */,
 			);
 			name = JHCollectionView;
 			sourceTree = "<group>";
@@ -331,6 +334,7 @@
 				ORGANIZATIONNAME = junqhao;
 				TargetAttributes = {
 					6003F589195388D20070C39A = {
+						DevelopmentTeam = HUW3H8NBU9;
 						LastSwiftMigration = 1320;
 					};
 					6003F5AD195388D20070C39A = {
@@ -472,6 +476,7 @@
 				447DA0C6284CCC1400B2DE7C /* JHFoodViewModel.m in Sources */,
 				447DA0D0284DA84B00B2DE7C /* JHSystemWFViewController.m in Sources */,
 				44CBB0C3284B8AB50038FFCB /* JHMasonryCollectionViewCell.m in Sources */,
+				44FE435B285B13C6009A3E02 /* JHCompViewController.swift in Sources */,
 				447DA0B7284CBE6200B2DE7C /* JHFood.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
@@ -607,10 +612,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = HUW3H8NBU9;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = JHUIKit/JHUIKit_Example.pch;
 				INFOPLIST_FILE = "JHUIKit/JHUIKit-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
@@ -629,10 +636,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = HUW3H8NBU9;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = JHUIKit/JHUIKit_Example.pch;
 				INFOPLIST_FILE = "JHUIKit/JHUIKit-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";

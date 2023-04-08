@@ -18,4 +18,5 @@
 #import "JHUIKit_Example-Swift.h"
 #import <JHUIKit/JHUIKit.h>
 #import <YYModel/YYModel.h>
+#import "JHUIKit-Swift.h" //oc使用pod中swift
 #endif /* JHUIKit_Example_pch */
